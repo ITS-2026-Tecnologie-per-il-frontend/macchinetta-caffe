@@ -1,0 +1,14 @@
+{
+  "name": "coffee-machine-api",
+  "version": "1.0.0",
+  "description": "REST API per una macchinetta del caffe",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}
