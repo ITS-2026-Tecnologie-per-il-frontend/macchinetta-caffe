@@ -1,0 +1,62 @@
+/* Stili globali: colori (variabili CSS) e reset di base. */
+:root {
+  --bg: #f6f1eb;
+  --panel: #ffffff;
+  --text: #3b2f2a;
+  --text-muted: #8a7b72;
+  --border: #e6dcd3;
+  --accent: #6f4e37;
+  --accent-text: #ffffff;
+  --ok: #2e7d32;
+  --ok-bg: #e8f5e9;
+  --warn: #c62828;
+  --warn-bg: #fdecea;
+  --busy: #e65100;
+  --busy-bg: #fff3e0;
+  --overlay: rgba(40, 25, 15, 0.55);
+  --cup: #c9bcb0;
+  --cup-inside: #faf6f2;
+  --steam: #b8aca2;
+
+  /* I liquidi hanno lo stesso colore in tema chiaro e scuro: il caffè è sempre marrone. */
+  --liquid-coffee: #3b2314;
+  --liquid-americano: #5e3c22;
+  --liquid-milk: #c9a27a;
+  --liquid-foam: #efdfc6;
+
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1714;
+    --panel: #29221e;
+    --text: #f1e9e2;
+    --text-muted: #b3a59b;
+    --border: #3e342e;
+    --accent: #c89b73;
+    --accent-text: #1c1714;
+    --ok: #81c784;
+    --ok-bg: #1f3321;
+    --warn: #ef9a9a;
+    --warn-bg: #3d1f1f;
+    --busy: #ffb74d;
+    --busy-bg: #3d2a14;
+    --overlay: rgba(0, 0, 0, 0.65);
+    --cup: #e9e2da;
+    --cup-inside: #3a302a;
+    --steam: #8c8079;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}

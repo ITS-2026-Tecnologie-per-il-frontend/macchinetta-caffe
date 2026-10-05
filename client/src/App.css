@@ -1,0 +1,380 @@
+.app {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+h1 {
+  margin: 0;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+}
+
+.subtitle,
+.loading {
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* --- Stato macchina --- */
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.status-row h2 {
+  margin: 0;
+}
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.badge.ready {
+  color: var(--ok);
+  background: var(--ok-bg);
+}
+
+.badge.busy {
+  color: var(--busy);
+  background: var(--busy-bg);
+}
+
+.resource {
+  margin-bottom: 12px;
+}
+
+.resource-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.resource-value.low {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+.resource-track {
+  height: 10px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.resource-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s;
+}
+
+.resource-fill.low {
+  background: var(--warn);
+}
+
+.total {
+  margin: 16px 0 0;
+}
+
+/* --- Bevande --- */
+
+.drinks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.drink {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+
+.drink.unavailable {
+  opacity: 0.7;
+}
+
+.drink-icon {
+  font-size: 2rem;
+}
+
+.drink h3 {
+  margin: 8px 0 4px;
+}
+
+.drink-price {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.drink-available {
+  margin: 8px 0 12px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.drink-available.warning {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button.reset {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px dashed var(--border);
+}
+
+/* --- Messaggi --- */
+
+.message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 0 0 20px;
+}
+
+.message.success {
+  color: var(--ok);
+  background: var(--ok-bg);
+}
+
+.message.error {
+  color: var(--warn);
+  background: var(--warn-bg);
+}
+
+/* --- Pop-up di preparazione --- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--overlay);
+  animation: fade-in 0.2s ease-out;
+}
+
+.modal {
+  width: 100%;
+  max-width: 360px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--panel);
+  text-align: center;
+  animation: pop-in 0.25s ease-out;
+}
+
+.modal h2 {
+  margin-bottom: 8px;
+}
+
+.modal-text {
+  margin: 16px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.progress {
+  height: 12px;
+  margin-top: 20px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  /* La durata arriva dallo style inline (preparationTime della bevanda). */
+  animation-name: grow;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes grow {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+/* --- Tazza animata --- */
+
+.cup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.steam {
+  display: flex;
+  gap: 12px;
+  height: 44px;
+  align-items: flex-end;
+}
+
+.steam span {
+  width: 6px;
+  height: 26px;
+  border-radius: 3px;
+  background: var(--steam);
+  opacity: 0;
+  animation: steam 2s ease-out infinite;
+}
+
+.steam span:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.steam span:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+@keyframes steam {
+  0% {
+    transform: translateY(12px) scaleY(0.5);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-12px) scaleY(1);
+    opacity: 0;
+  }
+}
+
+.cup-row {
+  display: flex;
+  align-items: center;
+  /* Sposta la tazza a sinistra di metà manico, così il corpo resta centrato. */
+  margin-left: 22px;
+}
+
+.cup-body {
+  position: relative;
+  width: 100px;
+  height: 90px;
+  border: 4px solid var(--cup);
+  border-top: none;
+  border-radius: 0 0 40px 40px;
+  overflow: hidden;
+  background: var(--cup-inside);
+}
+
+.cup-handle {
+  width: 22px;
+  height: 34px;
+  border: 4px solid var(--cup);
+  border-left: none;
+  border-radius: 0 16px 16px 0;
+}
+
+.cup.small .cup-row {
+  margin-left: 16px;
+}
+
+.cup.small .cup-body {
+  width: 70px;
+  height: 56px;
+  border-radius: 0 0 28px 28px;
+}
+
+.cup.small .cup-handle {
+  width: 16px;
+  height: 24px;
+}
+
+.saucer {
+  width: 150px;
+  height: 10px;
+  margin-top: 2px;
+  border-radius: 50%;
+  background: var(--cup);
+}
+
+.cup.small .saucer {
+  width: 110px;
+}
+
+.cup-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* Durata e ritardo arrivano dallo style inline, calcolati in CoffeeCup.jsx. */
+  animation-name: fill;
+  animation-timing-function: linear;
+  animation-fill-mode: backwards;
+}
+
+/* Solo "from": il "to" è l'altezza finale scritta nello style dello strato. */
+@keyframes fill {
+  from {
+    height: 0;
+  }
+}
+
+/* Chi ha chiesto al sistema operativo meno animazioni non vede il vapore. */
+@media (prefers-reduced-motion: reduce) {
+  .steam span {
+    animation: none;
+  }
+}

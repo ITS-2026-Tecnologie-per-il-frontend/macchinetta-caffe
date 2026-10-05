@@ -17,32 +17,51 @@ const initialMachine = {
 
 const machine = { ...initialMachine };
 
+// preparationTime: durata dell'erogazione in millisecondi (il cappuccino deve montare il latte).
 const drinks = [
   {
     id: "espresso",
     name: "Espresso",
     price: 1.0,
+    preparationTime: 2000,
     requirements: { water: 10, coffee: 12, milk: 0 }
   },
   {
     id: "americano",
     name: "Americano",
     price: 1.2,
+    preparationTime: 3000,
     requirements: { water: 20, coffee: 12, milk: 0 }
   },
   {
     id: "cappuccino",
     name: "Cappuccino",
     price: 1.5,
+    preparationTime: 4500,
     requirements: { water: 10, coffee: 12, milk: 20 }
   },
   {
     id: "macchiato",
     name: "Macchiato",
     price: 1.3,
+    preparationTime: 3000,
     requirements: { water: 10, coffee: 12, milk: 8 }
   }
 ];
+
+// Quante bevande di questo tipo si possono ancora preparare con le risorse attuali.
+// Il limite è dato dalla risorsa che finisce per prima (es. il latte per il cappuccino).
+function countAvailable(drink) {
+  const counts = Object.entries(drink.requirements)
+    .filter(([, amount]) => amount > 0)
+    .map(([resource, amount]) => Math.floor(machine[resource] / amount));
+
+  return Math.min(...counts);
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 app.get("/", (req, res) => {
   res.json({
@@ -69,7 +88,10 @@ app.get("/api/machine", (req, res) => {
 app.get("/api/drinks", (req, res) => {
   res.json({
     success: true,
-    drinks
+    drinks: drinks.map((drink) => ({
+      ...drink,
+      available: countAvailable(drink)
+    }))
   });
 });
 
@@ -85,10 +107,10 @@ app.get("/api/stats", (req, res) => {
   });
 });
 
-app.post("/api/coffee", (req, res) => {
+app.post("/api/coffee", async (req, res) => {
   const { drink } = req.body;
 
-  if (!drink) {
+  if (typeof drink !== "string") {
     return res.status(400).json({
       success: false,
       error: "Devi specificare una bevanda. Esempio: { \"drink\": \"espresso\" }"
@@ -102,6 +124,13 @@ app.post("/api/coffee", (req, res) => {
       success: false,
       error: "Bevanda non trovata.",
       availableDrinks: drinks.map((item) => item.id)
+    });
+  }
+
+  if (machine.status === "preparing") {
+    return res.status(409).json({
+      success: false,
+      error: "La macchinetta sta già preparando una bevanda. Riprova tra poco."
     });
   }
 
@@ -134,6 +163,9 @@ app.post("/api/coffee", (req, res) => {
   machine.coffee -= requirements.coffee;
   machine.milk -= requirements.milk;
   machine.totalCoffees += 1;
+
+  // Simula il tempo di erogazione: durante l'attesa GET /api/machine risponde "preparing".
+  await wait(selectedDrink.preparationTime);
 
   machine.status = "ready";
 
