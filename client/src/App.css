@@ -159,10 +159,68 @@ button:disabled {
   cursor: not-allowed;
 }
 
-button.reset {
-  background: transparent;
+.hint {
+  margin: 16px 0 0;
   color: var(--text-muted);
-  border: 1px dashed var(--border);
+  text-align: center;
+}
+
+.hint a {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* --- Menu di navigazione --- */
+
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.nav a {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* "active" la aggiunge NavLink sulla pagina in cui ci troviamo. */
+.nav a.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+/* --- Pagina ingredienti --- */
+
+.ingredient {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+/* La barra occupa tutto lo spazio rimasto accanto al pulsante. */
+.ingredient .resource {
+  flex: 1;
+}
+
+button.refill {
+  width: auto;
+  margin-bottom: 8px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.ingredient + button {
+  margin-top: 12px;
 }
 
 /* --- Messaggi --- */

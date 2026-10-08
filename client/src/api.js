@@ -30,6 +30,11 @@ export async function makeCoffee(drinkId) {
   })
 }
 
-export async function resetMachine() {
-  return request('/api/reset', { method: 'POST' })
+// ingredient: 'water' | 'coffee' | 'milk', oppure niente per ricaricare tutto.
+export async function refillIngredient(ingredient) {
+  return request('/api/refill', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ingredient }),
+  })
 }

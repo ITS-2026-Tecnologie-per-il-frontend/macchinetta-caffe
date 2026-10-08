@@ -1,24 +1,20 @@
 import { useEffect, useState } from 'react'
-import { getDrinks, getMachine, makeCoffee, resetMachine } from './api.js'
-import { formatPrice } from './format.js'
-import MachineStatus from './components/MachineStatus.jsx'
-import DrinkCard from './components/DrinkCard.jsx'
-import PreparationModal from './components/PreparationModal.jsx'
+import { Link, NavLink, Route, Routes } from 'react-router'
+import { getDrinks, getMachine } from './api.js'
+import HomePage from './pages/HomePage.jsx'
+import IngredientsPage from './pages/IngredientsPage.jsx'
 import './App.css'
 
 // Ogni quanto chiediamo al server lo stato aggiornato.
 // Serve perché la macchinetta è condivisa: un collega può usarla da un altro PC.
 const REFRESH_INTERVAL_MS = 2000
 
+// App è il "guscio" comune a tutte le pagine: intestazione, menu e dati della macchina.
+// I dati stanno qui (e non nelle pagine) perché servono a entrambe le pagine.
 function App() {
   const [machine, setMachine] = useState(null)
   const [drinks, setDrinks] = useState([])
   const [isOffline, setIsOffline] = useState(false)
-  // { type: 'success' | 'error', text: '...' } oppure null
-  const [message, setMessage] = useState(null)
-  // La bevanda che stiamo ordinando noi: { drink, status: 'preparing' | 'done', text } oppure null.
-  // Quando non è null, il pop-up è aperto.
-  const [preparation, setPreparation] = useState(null)
 
   async function refresh() {
     try {
@@ -43,45 +39,19 @@ function App() {
     return () => clearInterval(intervalId)
   }, [])
 
-  async function handleOrder(drink) {
-    setMessage(null)
-    setPreparation({ drink, status: 'preparing' })
-
-    try {
-      const data = await makeCoffee(drink.id)
-      // Il pop-up resta aperto in stato "pronto" finché l'utente non ritira la bevanda.
-      setPreparation({
-        drink,
-        status: 'done',
-        text: `Importo: ${formatPrice(data.drink.price)}`,
-      })
-    } catch (error) {
-      setPreparation(null)
-      setMessage({ type: 'error', text: error.message })
-    } finally {
-      refresh()
-    }
-  }
-
-  async function handleReset() {
-    try {
-      const data = await resetMachine()
-      setMessage({ type: 'success', text: data.message })
-    } catch (error) {
-      setMessage({ type: 'error', text: error.message })
-    }
-    refresh()
-  }
-
-  // La macchina è occupata se sta preparando la NOSTRA bevanda
-  // oppure se il server dice che sta preparando quella di qualcun altro.
-  const isBusy = preparation?.status === 'preparing' || machine?.status === 'preparing'
-
   return (
     <main className="app">
       <header>
         <h1>☕ Macchinetta del caffè</h1>
         <p className="subtitle">Distributore automatico dell'ufficio</p>
+
+        {/* NavLink è un Link che aggiunge da solo la classe "active" alla pagina corrente. */}
+        <nav className="nav">
+          <NavLink to="/" end>
+            ☕ Bevande
+          </NavLink>
+          <NavLink to="/ingredienti">🫘 Ingredienti</NavLink>
+        </nav>
       </header>
 
       {isOffline && (
@@ -94,28 +64,25 @@ function App() {
       {machine === null ? (
         !isOffline && <p className="loading">Accensione della macchinetta...</p>
       ) : (
-        <>
-          <MachineStatus machine={machine} isBusy={isBusy} />
-
-          <section className="panel">
-            <h2>Scegli la bevanda</h2>
-            <div className="drinks">
-              {drinks.map((drink) => (
-                <DrinkCard key={drink.id} drink={drink} isBusy={isBusy} onOrder={handleOrder} />
-              ))}
-            </div>
-          </section>
-
-          {message && <p className={`message ${message.type}`}>{message.text}</p>}
-
-          <button className="reset" onClick={handleReset} disabled={isBusy}>
-            🔧 Ricarica la macchinetta (reset)
-          </button>
-        </>
-      )}
-
-      {preparation && (
-        <PreparationModal preparation={preparation} onClose={() => setPreparation(null)} />
+        // Routes guarda l'URL e mostra solo la Route il cui path corrisponde.
+        <Routes>
+          <Route
+            path="/"
+            element={<HomePage machine={machine} drinks={drinks} onChange={refresh} />}
+          />
+          <Route
+            path="/ingredienti"
+            element={<IngredientsPage machine={machine} onChange={refresh} />}
+          />
+          <Route
+            path="*"
+            element={
+              <p className="loading">
+                Pagina non trovata. <Link to="/">Torna alle bevande</Link>
+              </p>
+            }
+          />
+        </Routes>
       )}
     </main>
   )

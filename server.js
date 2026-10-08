@@ -17,6 +17,13 @@ const initialMachine = {
 
 const machine = { ...initialMachine };
 
+// Gli ingredienti ricaricabili, con il nome da usare nei messaggi.
+const INGREDIENT_NAMES = {
+  water: "acqua",
+  coffee: "caffè",
+  milk: "latte"
+};
+
 // preparationTime: durata dell'erogazione in millisecondi (il cappuccino deve montare il latte).
 const drinks = [
   {
@@ -73,6 +80,7 @@ app.get("/", (req, res) => {
       "GET /api/drinks",
       "GET /api/stats",
       "POST /api/coffee",
+      "POST /api/refill",
       "POST /api/reset"
     ]
   });
@@ -184,6 +192,43 @@ app.post("/api/coffee", async (req, res) => {
       status: machine.status,
       totalCoffees: machine.totalCoffees
     }
+  });
+});
+
+// Ricarica un ingrediente ({ "ingredient": "milk" }) oppure tutti, se il body è vuoto.
+// A differenza del reset, non azzera il contatore delle bevande erogate.
+app.post("/api/refill", (req, res) => {
+  // Se la richiesta non ha un body JSON, in Express 5 req.body è undefined.
+  const { ingredient } = req.body ?? {};
+
+  if (machine.status === "preparing") {
+    return res.status(409).json({
+      success: false,
+      error: "Non si può ricaricare durante la preparazione di una bevanda."
+    });
+  }
+
+  if (ingredient !== undefined && !Object.keys(INGREDIENT_NAMES).includes(ingredient)) {
+    return res.status(400).json({
+      success: false,
+      error: "Ingrediente non valido.",
+      availableIngredients: Object.keys(INGREDIENT_NAMES)
+    });
+  }
+
+  const toRefill = ingredient ? [ingredient] : Object.keys(INGREDIENT_NAMES);
+
+  // Il valore iniziale coincide con la capienza massima del serbatoio.
+  for (const name of toRefill) {
+    machine[name] = initialMachine[name];
+  }
+
+  res.json({
+    success: true,
+    message: ingredient
+      ? `Ricarica completata: ${INGREDIENT_NAMES[ingredient]}.`
+      : "Ricarica completata: tutti gli ingredienti.",
+    machine
   });
 });
 
