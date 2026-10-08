@@ -54,8 +54,10 @@ Il frontend sarà disponibile su http://localhost:5173. Le chiamate a `/api/...`
 Struttura del frontend:
 
 - `src/api.js`: tutte le chiamate al backend
-- `src/App.jsx`: stato dell'applicazione e aggiornamento automatico ogni 2 secondi
-- `src/components/MachineStatus.jsx`: stato della macchina e livelli delle risorse
+- `src/main.jsx`: avvia l'app dentro `BrowserRouter` (React Router)
+- `src/App.jsx`: intestazione, menu, elenco delle pagine (`Routes`) e aggiornamento automatico dei dati ogni 2 secondi
+- `src/pages/HomePage.jsx` (`/`): scelta e preparazione delle bevande
+- `src/pages/IngredientsPage.jsx` (`/ingredienti`): livelli degli ingredienti e pulsanti di ricarica
 - `src/components/ResourceBar.jsx`: una barra di livello (acqua, caffè, latte)
 - `src/components/DrinkCard.jsx`: una bevanda con prezzo, disponibilità e pulsante
 - `src/components/PreparationModal.jsx`: pop-up con progress bar mostrato durante la preparazione
@@ -96,6 +98,20 @@ Bevande disponibili:
 - americano
 - cappuccino
 - macchiato
+
+### POST /api/refill
+
+Ricarica un ingrediente al livello massimo. Non azzera il contatore delle bevande erogate. Se la macchina sta preparando una bevanda risponde `409`.
+
+Body per ricaricare un solo ingrediente (`water`, `coffee` oppure `milk`):
+
+```json
+{
+  "ingredient": "milk"
+}
+```
+
+Con il body vuoto (`{}`) ricarica tutti gli ingredienti.
 
 ### POST /api/reset
 
